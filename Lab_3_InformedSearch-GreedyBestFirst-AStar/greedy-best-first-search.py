@@ -32,7 +32,7 @@ def TREE_SEARCH():
         if node.STATE == GOAL_STATE:
             return node.path()
         children = EXPAND(node)
-        fringe = INSERT_LOWEST(children, fringe)
+        fringe = INSERT_ALL(children, fringe)
         print("fringe: {}".format(fringe))
 
 
@@ -73,26 +73,21 @@ def INSERT_ALL(list, queue):
     return queue
 
 '''
-Inserts the node with the lowest heuristic into the queue
-'''
-def INSERT_LOWEST(list, queue):
-    lowestHeuristicNode = list[0]
-
-    for node in list:
-        if node.STATE[1] < lowestHeuristicNode.STATE[1]:
-            lowestHeuristicNode = node
-
-    INSERT(lowestHeuristicNode, queue)
-
-    return queue
-
-'''
 Remove first element from fringe
 '''
 def REMOVE_FIRST(queue):
     if len(queue) != 0:
-        return queue.pop(0)
+        indexToRemove = GET_LOWEST_HEURISTIC_NODE_INDEX(queue)
+        return queue.pop(indexToRemove)
 
+def GET_LOWEST_HEURISTIC_NODE_INDEX(queue):
+    lowestHeuristicNodeIndex = 0
+
+    for index in range(1, len(queue)):
+        if queue[index].STATE[1] < queue[lowestHeuristicNodeIndex].STATE[1]:
+            lowestHeuristicNodeIndex = index
+
+    return lowestHeuristicNodeIndex
 
 '''
 Successor function, mapping the nodes to its successors
@@ -117,7 +112,7 @@ L = ('L', 0)
 
 
 INITIAL_STATE = A
-GOAL_STATE = K
+GOAL_STATE = L
 STATE_SPACE = {A: [B, C, D],
                B: [A, F, E],
                C: [A, E],
