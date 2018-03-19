@@ -87,7 +87,7 @@ def successor_fn(state):  # Lookup list of successor states
 '''
 Heuristic function that returns the cleanliness of the environment
 '''
-def heuristic():
+def heuristic(node):
     cleanSquares = 0
 
     for isClean in CLEANLINESS:
@@ -96,22 +96,21 @@ def heuristic():
 
     return cleanSquares
 
-# False = Dirty, True = Clean
-#              A      B      C      D
-CLEANLINESS = [False, False, False, False]
+# False -> Dirty, True -> Clean
+CLEANLINESS = {'A': False,
+               'B': False,
+               'C': False,
+               'D': False}
 
-A = ('A', 'dirty', 'dirty')
-B = ('B', 'dirty', 'dirty')
-C = ('A', 'clean', 'dirty')
-D = ('B', 'clean', 'dirty')
-E = ('A', 'dirty', 'clean')
-F = ('B', 'dirty', 'clean')
-G = ('B', 'clean', 'clean')
-H = ('A', 'clean', 'clean')
-
+# Current states
+A = {'A': False}
+B = {'B': False}
+C = {'C': False}
+D = {'D': False}
 
 
-INITIAL_STATE = ('A', 'Dirty', 'Dirty')
+
+INITIAL_STATE = {'A': False}
 # Note: In this case, goal state is when vacuum goes back to location A and both A and B are clean
 # Can also be: GOAL_STATE = ('B', 'Clean', 'Clean')
 GOAL_STATE = ('A', 'Clean', 'Clean')
