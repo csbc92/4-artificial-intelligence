@@ -93,7 +93,7 @@ def GET_LOWEST_HEURISTIC_NODE_INDEX(queue):
 Successor function, mapping the nodes to its successors
 '''
 def successor_fn(state):  # Lookup list of successor states
-    return STATE_SPACE[state]  # successor_fn( 'C' ) returns ['F', 'G']
+    return STATE_SPACE[state]
 
 
 # STATES with Location and Heuristic cost to GOAL in direct distance
