@@ -18,8 +18,8 @@ def main():
     # To simulate starting from index 1, we add a dummy value at index 0
     observationss = [
         [None, 3, 1, 3],
-        # [None, 3, 3, 1, 1, 2, 2, 3, 1, 3],
-        # [None, 3, 3, 1, 1, 2, 3, 3, 1, 2],
+         [None, 3, 3, 1, 1, 2, 2, 3, 1, 3],
+         [None, 3, 3, 1, 1, 2, 3, 3, 1, 2],
     ]
 
     # Markov transition matrix
@@ -98,57 +98,74 @@ def compute_forward(states, observations, transitions, emissions):
 
 
 def compute_viterbi(states, observations, transitions, emissions):
-    big_n = len(states) - 2
+    N = len(states) - 2
 
     # The first element is dummy, so we ignore it
-    big_t = len(observations) - 1
+    T = len(observations) - 1
 
     # The last state
-    qf = big_n + 1
+    qF = N + 1
 
     # Initialize to 100, so it's easy to see what elements were not overwritten
     # (0 could be a valid value)
-    viterbi = 100 * np.ones((big_n + 2, big_t + 1))
+    viterbi = 100 * np.ones((N + 2, T + 1))
 
     # Must be of type int, otherwise it is tricky to use its elements to index
     # the states
     # Initialize to 100, so it's easy to see what elements were not overwritten
     # (0 could be a valid value)
-    backpointers = 100 * np.ones((big_n + 2, big_t + 1), dtype=int)
+    backpointers = 100 * np.ones((N + 2, T + 1), dtype=int)
 
-    for s in inclusive_range(1, big_n):
+    for s in inclusive_range(1, N):
         viterbi[s, 1] = transitions[0, s] * emissions[s, observations[1]]
         backpointers[s, 1] = 0
 
-    for t in inclusive_range(2, big_t):
-        for s in inclusive_range(1, big_n):
+    for t in inclusive_range(2, T):
+        for s in inclusive_range(1, N):
 
-            max = 0
+            max_probability = 0
             argmax_list = list()
-            for s_mark in inclusive_range(1, big_n):
-                calc = viterbi[s_mark, t-1] * transitions[s_mark, s] * emissions[s, observations[t]]
+
+            for s_mark in inclusive_range(1, N):
+                probability = viterbi[s_mark, t-1] * transitions[s_mark, s] * emissions[s, observations[t]]
                 argmax_list.append(viterbi[s_mark, t-1] * transitions[s_mark, s])
-                if max < calc:
-                    max = calc
-            viterbi[s, t] = max
-            backpointers[s, t] = argmax(argmax_list)
+                if max_probability < probability:
+                    max_probability = probability
+            viterbi[s, t] = max_probability
+            backpointers[s, t] = argmax(argmax_list) + 1 # Add 1, because argmax is zero-indexed
 
-    max = 0
+    max_probability = 0
     argmax_list = list()
-    for s in inclusive_range(1, big_n):
-        calc = viterbi[s, big_t] * transitions[s, qf]
-        argmax_list.append(calc)
-        if max < calc:
-            max = calc
+    for s in inclusive_range(1, N):
+        probability = viterbi[s, T] * transitions[s, qF]
+        argmax_list.append(probability)
+        if max_probability < probability:
+            max_probability = probability
 
-    viterbi[qf, big_t] = max
-    backpointers[qf, big_t] = argmax(argmax_list)
-
-    print("")
+    viterbi[qF, T] = max_probability
+    backpointers[qF, T] = argmax(argmax_list) + 1  # Add 1, because argmax is zero-indexed
 
 
-    # COMPLETE THIS METHOD
+    # BACKTRACING AND FINDING THE PATH
     # Returns a path (list of strings indicating if it was hot or cold that day)
+
+    # index backpointers[3,3] is the final state. It points to backpointers[1, 3], then backpointers[1, 2], backpointers[1, 1], then stop when we reach time step 0.
+    path = list()
+    states_length = backpointers.shape[0]       # 1st dimension of states
+    observations_length = backpointers.shape[1] # 2nd dimension of observations
+    state_in_path = backpointers[states_length-1, observations_length-1]
+    path.append(states[state_in_path]) # Add the final state
+
+    # Trace the states in reverse order
+    for observation in range(observations_length-1, 1, -1):
+        state_in_path = backpointers[state_in_path, observation]
+        path.append(states[state_in_path])
+
+    path.reverse() # Make the path in chronological order
+
+    return path
+
+
 
 
 def argmax(sequence):
