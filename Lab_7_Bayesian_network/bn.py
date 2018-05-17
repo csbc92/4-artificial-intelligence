@@ -119,8 +119,24 @@ class Variable(object):
         if self.ready:
             return
 
-        # COMPLETE THIS FUNCTION
-        # Set self.marginal_probabilities
+        if len(self.parents) == 0:
+            self.marginal_probabilities = self.probability_table[list(self.probability_table.keys())[0]]
+        else:
+            # for each row in probability table
+            for key, v in self.probability_table.items():
+                # marginal probability of parents, assume parents are
+                # independent
+                parents_probability_array = [
+                    parent.get_marginal_probability(k)
+                    for parent, k in zip(self.parents, key)
+                ]
+
+                parents_probability = multiply_vector_elements(parents_probability_array)
+
+                self.marginal_probabilities = [
+                    self.marginal_probabilities[j] + v[j]*parents_probability
+                    for j in range(len(self.assignments))
+                ]
 
         # set this Node`s state to ready
         self.ready = True
@@ -209,10 +225,13 @@ class BayesianNetwork(object):
     # values is dictionary
     def get_joint_probability(self, values):
         """ return the joint probability of the Nodes """
-        pass
-        # COMPLETE THIS FUNCTION
 
-        # Return join probability
+        joint = 1
+        for var in reversed(self.variables):
+            var_value = values[var.name]
+            parents_values = self.sub_vals(var, values)
+            joint = joint * var.get_probability(var_value, parents_values)
+        return joint
 
     def get_conditional_probability(self, values, evidents):
         """ returns the conditional probability.
@@ -338,8 +357,10 @@ def print_marginal_probabilities(network):
 def sprinkler():
     # the values kept as dictionary
     t1 = {(): (0.5, 0.5)}
-    t2 = {('false',): (0.5, 0.5), ('true',): (0.9, 0.1)}
-    t3 = {('false',): (0.8, 0.2), ('true',): (0.2, 0.8)}
+    t2 = {('false',): (0.5, 0.5),
+          ('true',): (0.9, 0.1)}
+    t3 = {('false',): (0.8, 0.2),
+          ('true',): (0.2, 0.8)}
     t4 = {
         ('false', 'false'): (1, 0),
         ('true', 'false'): (0.1, 0.9),
@@ -360,9 +381,9 @@ def sprinkler():
     network.set_variables(variables)
 
     # pre-calculate marginals
-    # network.calculate_marginal_probabilities()
+    network.calculate_marginal_probabilities()
 
-    # print_marginal_probabilities(network)
+    print_marginal_probabilities(network)
 
     print('')
 
@@ -372,19 +393,19 @@ def sprinkler():
         'WetGrass': 'true',
         'Rain': 'false'
     }
-    # print_joint_probability(network, joint_values)
+    print_joint_probability(network, joint_values)
 
     print('')
 
     conditionals_vars = {'Sprinkler': 'true'}
     conditionals_evidents = {'WetGrass': 'true'}
 
-    # print_conditional_probability(network, conditionals_vars, conditionals_evidents)
+    print_conditional_probability(network, conditionals_vars, conditionals_evidents)
 
     print('')
 
-    # sample = create_random_sample(network)
-    # print_joint_probability(network, sample)
+    sample = create_random_sample(network)
+    print_joint_probability(network, sample)
 
 
 sprinkler()
