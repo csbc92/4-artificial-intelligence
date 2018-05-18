@@ -382,23 +382,24 @@ def malfunctioning_car_homework():
     table_dt = {(): (0.7, 0.3)}
     table_em = {(): (0.7, 0.3)}
     table_ftl = {(): (0.8, 0.2)}
-    table_v = {('false',): (0.1, 0.9), ('true',): (0.7, 0.3)}
+    table_v = {('false',): (0.9, 0.1),
+               ('true',): (0.3, 0.7)}
     table_sms = {
-        ('false', 'false'): (0.7, 0.3),
-        ('true', 'false'): (0.6, 0.4),
-        ('false', 'true'): (0.3, 0.7),
-        ('true', 'true'): (0.05, 0.95)
+        ('false', 'false'): (0.3, 0.7),
+        ('true', 'false'): (0.4, 0.6),
+        ('false', 'true'): (0.7, 0.3),
+        ('true', 'true'): (0.95, 0.05)
     }
 
     table_hc = {
-        ('false', 'false', 'false'): (0.01, 0.99),
-        ('false', 'false', 'true'): (0.1, 0.9),
+        ('false', 'false', 'false'): (0.99, 0.01),
+        ('false', 'false', 'true'): (0.9, 0.1),
         ('false', 'true', 'false'): (0.5, 0.5),
-        ('false', 'true', 'true'): (0.6, 0.4),
-        ('true', 'false', 'false'): (0.2, 0.8),
-        ('true', 'false', 'true'): (0.3, 0.7),
-        ('true', 'true', 'false'): (0.8, 0.2),
-        ('true', 'true', 'true'): (0.9, 0.1),
+        ('false', 'true', 'true'): (0.4, 0.6),
+        ('true', 'false', 'false'): (0.8, 0.2),
+        ('true', 'false', 'true'): (0.7, 0.3),
+        ('true', 'true', 'false'): (0.2, 0.8),
+        ('true', 'true', 'true'): (0.1, 0.9),
     }
 
     # creation of Nodes objects
@@ -407,7 +408,7 @@ def malfunctioning_car_homework():
     ftl = Variable('Fuel Tank Leaking', ('false', 'true'), table_ftl)
     v = Variable('Vibrations', ('false', 'true'), table_v, [dt])
     sms = Variable('Slow Max Speed', ('false', 'true'), table_sms, [dt, em])
-    hc = Variable('High Consumption', ('false', 'true'), table_hc, [dt, em, ftl])
+    hc = Variable('High Consumption', ('false', 'true'), table_hc, [dt, ftl, em])
 
     variables = [dt, em, ftl, v, sms, hc]
 
@@ -437,7 +438,7 @@ def malfunctioning_car_homework():
 
     conditionals_vars_list = ({'Damaged Tire': 'true'}, {'Electronics Malfunctioning': 'true'}, {'Fuel Tank Leaking': 'true'})
     conditionals_evidents = {'Vibrations': 'true', 'Slow Max Speed': 'true', 'High Consumption': 'false'}
-    print("Calculating which of the following conditional propability is most likely (i.e. is highest): ")
+    print("Calculating which of the following conditional probability is most likely (i.e. is highest): ")
     print(conditionals_vars_list)
     print("Given: ")
     print(conditionals_evidents)
