@@ -108,6 +108,52 @@ def has_won(state, player):
     return -1
 
 
+def has_won2(state, player):
+    n = int(len(state)**0.5) # number of fields in a row, column, diagonal
+
+    uniq_value = 0 # The value represents a unique integer, that indicates if there is a match in row, column or diagonal
+
+    for i in range(0, len(state)):
+        if state[i] == player: # Increase the unique value if the player is in that field
+            uniq_value += 2**i
+
+    # Check rows
+    uniq_row_value = 0
+    for j in range(0, len(state)):
+        uniq_row_value += 2 ** j
+
+        if (j+1) % n == 0 and j > 0:
+            if uniq_value == uniq_row_value:
+                return 1  # Player won
+            uniq_row_value = 0
+
+    # Check columns
+    uniq_col_values = list()
+    for i in range(0, n):
+        uniq_col_value = 0
+        for j in range(0, len(state), n):
+            uniq_col_value += 2**(i+j)
+        uniq_col_values.append(uniq_col_value)
+
+    if any([x == uniq_value for x in uniq_col_values]):
+        return 1  # Player won
+
+    # Check diagonal 1
+    uniq_diag_value = 0
+    for i in range(0, len(state), n+1):
+        uniq_diag_value += 2**i
+    if uniq_value == uniq_diag_value:
+        return 1  # Player won
+
+    # Check diagonal 2
+    uniq_diag_value = 0
+    for i in range(n-1, len(state), n - 1):
+        uniq_diag_value += 2 ** i
+    if uniq_value == uniq_diag_value:
+        return 1  # Player won
+
+    return -1  # Player did not win
+
 def successors_of(state):
     """
     returns a list of tuples (move, state) as shown in the exercise slides
@@ -156,30 +202,53 @@ def argmax(iterable, func):
     return max(iterable, key=func)
 
 
-if __name__ == '__main__':
-
-    """
+"""
+ A method for testing if the winner can be determined properly by the utility function
+"""
+def test_winner():
+    # 1st row
     winner = utility_of(['X', 'X', 'X', 3, 4, 5, 6, 7, 8])
-    print(winner)
+    print(winner == 1)
+
+    # 2nd row
     winner = utility_of([0, 1, 2, 'X', 'X', 'X', 6, 7, 8])
-    print(winner)
+    print(winner == 1)
+
+    # 3rd row
     winner = utility_of([0, 1, 2, 3, 4, 5, 'X', 'X', 'X'])
-    print(winner)
+    print(winner == 1)
 
+    # 1st column
     winner = utility_of(['X', 1, 2, 'X', 4, 5, 'X', 7, 8])
-    print(winner)
+    print(winner == 1)
+
+    # 2nd column
     winner = utility_of([0, 'X', 2, 3, 'X', 5, 6, 'X', 8])
-    print(winner)
+    print(winner == 1)
+
+    # 3rd column
     winner = utility_of([0, 1, 'X', 3, 4, 'X', 6, 7, 'X'])
-    print(winner)
+    print(winner == 1)
 
+    # 1st diagonal, starting upper right corner
     winner = utility_of([0, 1, 'X', 3, 'X', 5, 'X', 7, 8])
-    print(winner)
+    print(winner == 1)
+
+    # 2nd diagonal, starting upper left corner
     winner = utility_of(['X', 1, 2, 3, 'X', 5, 6, 7, 'X'])
-    print(winner)
+    print(winner == 1)
 
+    # Sample game also with player O involved
     winner = utility_of(['X', 'X', 'O', 'X', 'X', 'O', 6, 7, 'O'])
-    print(winner)
-    """
+    print(winner == 1)
 
+
+"""
+This program searches through all possible states down to the end of the game tree.
+After the search has been done, the agent knows which moves are the best, depending on the opponent's moves.
+The algorithm is a minimax algorithm.
+"""
+if __name__ == '__main__':
+    #print("Running test first..")
+   #test_winner()
     main()
