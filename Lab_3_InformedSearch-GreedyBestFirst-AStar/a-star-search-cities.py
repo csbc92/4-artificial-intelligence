@@ -142,56 +142,57 @@ def successor_fn(state):  # Lookup list of successor states
 
 
 # STATES with Location and Heuristic cost to GOAL in direct distance (euclidean space)
-A = ('A', 6)
-B = ('B', 5)
-C = ('C', 5)
-D = ('D', 2)
-E = ('E', 4)
-F = ('F', 5)
-G = ('G', 4)
-H = ('H', 1)
-I = ('I', 2)
-J = ('J', 1)
-K = ('K', 0)
-L = ('L', 0)
+ARAD = ('ARAD', 366)
+ZERIN = ('ZERIND', 374)
+ORADEA = ('ORADEA', 380)
+TIMIASORA = ('TIMIASORA', 329)
+LUGOJ = ('LUGOJ', 244)
+MEHADIA = ('MEHADIA', 241)
+DOBRETA = ('DOBRETA', 242)
+SIBIU = ('SIBIU', 253)
+RIMNICU_VILCEA = ('RIMNICU_VILCEA', 193)
+CRAIOVA = ('CRAIOVA', 160)
+FAGARAS = ('FAGARAS', 176)
+PITESTI = ('PITESTI', 10)
+
+BUCHAREST = ('BUCHAREST', 0)
+GIURGIU = ('GIURGIU', 77)
+URZICENI = ('URZICENI', 80)
+HIRSOVA = ('HIRSOVA', 151)
+EFORIE = ('EFORIE', 161)
+VASLUI = ('VASLUI', 199)
+IASI = ('IASI', 226)
+NEAMT = ('NEAMT', 234)
 
 
-INITIAL_STATE = A
-GOAL_STATE = 'K'
+INITIAL_STATE = ARAD
+GOAL_STATE = 'BUCHAREST'
 
 # State-space represents the possible paths from one node to another,
 # and the cost of traveling the path (expanding the node).
 # It is abused that, in python you can mutate tuples like: sometuple + (someitem,) returns a completely new tuple.
 
-
-"""
-# Experimental - a directional graph, that is you can only navigate "down" in the graph, not up again.
-STATE_SPACE = {A: [B+(1,), C+(2,), D+(6,)],
-               B: [F+(5,), E+(4,)],
-               C: [E+(1,)],
-               D: [H+(1,), I+(4,), J+(2,)],
-               E: [G+(2,), H+(3,)],
-               F: [G+(1,)],
-               G: [K+(6,)],
-               H: [K+(6,), L+(5,)],
-               I: [L+(3,)],
-               J: [],
-               K: [],
-               L: []}
-"""
-# Experimental - A bidirectional graph
-STATE_SPACE = {A: [B+(1,), C+(10,), D+(10,)],
-               B: [A+(1,), F+(5,), E+(4,)],
-               C: [A+(2,), E+(1,)],
-               D: [A+(4,), H+(1,), I+(4,), J+(2,)],
-               E: [B+(4,), C+(1,), G+(2,), H+(3,)],
-               F: [B+(4,), G+(1,)],
-               G: [F+(1,), E+(2,), K+(6,)],
-               H: [D+(1,), E+(3,), K+(6,), L+(5,)],
-               I: [D+(4,), L+(3,)],
-               J: [D+(2,)],
-               K: [G+(6,), H+(6,)],
-               L: [H+(5,), I+(3,)]}
+# Experimental - A bidirectional graph from the book
+STATE_SPACE = {ARAD: [ZERIN+(75,), SIBIU+(140,), TIMIASORA+(118,)],
+               ZERIN: [ARAD+(75,), ORADEA+(71,)],
+               ORADEA: [ZERIN+(71,), SIBIU+(151,)],
+               TIMIASORA: [ARAD+(118,), LUGOJ+(111,)],
+               LUGOJ: [TIMIASORA+(111,), MEHADIA+(70,)],
+               MEHADIA: [LUGOJ+(70,), DOBRETA+(75,)],
+               SIBIU: [ORADEA+(151,), ARAD+(140,), FAGARAS+(99,), RIMNICU_VILCEA+(80,)],
+               RIMNICU_VILCEA: [SIBIU+(80,), CRAIOVA+(146,), PITESTI+(97,)],
+               CRAIOVA: [DOBRETA+(120,), RIMNICU_VILCEA+(146,), PITESTI+(138,)],
+               DOBRETA: [MEHADIA+(75,), CRAIOVA+(120,)],
+               FAGARAS: [SIBIU+(99,), BUCHAREST+(211,)],
+               PITESTI: [RIMNICU_VILCEA+(97,), CRAIOVA+(138,), BUCHAREST+(101,)],
+               BUCHAREST: [FAGARAS+(211,), PITESTI+(101,), URZICENI+(85,), GIURGIU+(90,)],
+               GIURGIU: [BUCHAREST+(90,)],
+               URZICENI: [BUCHAREST + (85,), VASLUI+(142,), HIRSOVA+(98,)],
+               HIRSOVA: [URZICENI + (98,), EFORIE + (86,)],
+               EFORIE: [HIRSOVA + (86,)],
+               VASLUI: [URZICENI + (142,), IASI + (92,)],
+               IASI: [VASLUI + (92,), NEAMT + (87,)],
+               NEAMT: [IASI + (87,)]}
 
 '''
 Run tree search and display the nodes in the path to goal node
