@@ -49,7 +49,8 @@ class Node:  # Node has only PARENT_NODE, STATE, DEPTH
         print(self)
 
     def __repr__(self):
-        return 'State: ' + str(self.STATE) + ' - Total path cost: ###' + str(self.TOTAL_PATH_COST) + '### - Depth: ' + str(self.DEPTH)
+        # Prints f(x) = g(x) + h(x)
+        return 'State: ' + str(self.STATE) + ' - f(x): ###' + str(self.TOTAL_PATH_COST) + '### - Depth: ' + str(self.DEPTH)
 
 
 '''
@@ -63,7 +64,8 @@ def TREE_SEARCH():
     print("fringe: {}".format(fringe))
     while fringe is not None:
         node = REMOVE_FIRST(fringe)
-        explored_nodes.add(node.STATE[0])
+        print("lowest node in fringe: {}".format(node))
+        #explored_nodes.add(node.STATE[0])
         if node.STATE[0] == GOAL_STATE:
             return node.path()
         children = EXPAND(node)
@@ -157,45 +159,37 @@ def successor_fn(state):  # Lookup list of successor states
 
 
 # STATES with Location and Heuristic cost to GOAL in direct distance (euclidean space)
-A = ('A', 6)
-B = ('B', 5)
-C = ('C', 5)
-D = ('D', 2)
-E = ('E', 4)
-F = ('F', 5)
-G = ('G', 4)
-H = ('H', 1)
-I = ('I', 2)
-J = ('J', 1)
-K = ('K', 0)
-L = ('L', 0)
+A = ('A', 45)
+B = ('B', 132)
+C = ('C', 95)
+D = ('D', 95)
+E = ('E', 55)
+F = ('F', 38)
+G = ('G', 0)
+H = ('H', 50)
 
 
 INITIAL_STATE = A
-GOAL_STATE = 'L'
+GOAL_STATE = 'G'
 
 # State-space represents the possible paths from one node to another,
 # and the cost of traveling the path (expanding the node).
 # It is abused that, in python you can mutate tuples like: sometuple + (someitem,) returns a completely new tuple.
 
 
-"""
+
 # Experimental - a directional graph, that is you can only navigate "down" in the graph, not up again.
-STATE_SPACE = {A: [B+(1,), C+(2,), D+(6,)],
-               B: [F+(5,), E+(4,)],
-               C: [E+(1,)],
-               D: [H+(1,), I+(4,), J+(2,)],
-               E: [G+(2,), H+(3,)],
-               F: [G+(1,)],
-               G: [K+(6,)],
-               H: [K+(6,), L+(5,)],
-               I: [L+(3,)],
-               J: [],
-               K: [],
-               L: []}
-"""
+STATE_SPACE = {A: [B+(32,), C+(60,), D+(12,)],
+               B: [E+(86,)],
+               C: [B+(45,), F+(82,), G+(98,)],
+               D: [C+(34,), F+(75,), H+(30,)],
+               E: [C+(25,), G+(74,)],
+               F: [G+(56,)],
+               G: [],
+               H: [G+(40,)]}
+
 # Experimental - A bidirectional graph
-STATE_SPACE = {A: [B+(1,), C+(2,), D+(4,)],
+"""STATE_SPACE = {A: [B+(1,), C+(2,), D+(4,)],
                B: [A+(1,), F+(5,), E+(4,)],
                C: [A+(2,), E+(1,)],
                D: [A+(4,), H+(4,), I+(4,), J+(2,)],
@@ -207,6 +201,7 @@ STATE_SPACE = {A: [B+(1,), C+(2,), D+(4,)],
                J: [D+(2,)],
                K: [G+(6,), H+(6,)],
                L: [H+(5,), I+(3,)]}
+               """
 
 '''
 Run tree search and display the nodes in the path to goal node

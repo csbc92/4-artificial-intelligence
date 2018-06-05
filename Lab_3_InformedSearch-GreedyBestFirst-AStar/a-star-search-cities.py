@@ -23,12 +23,27 @@ class Node:  # Node has only PARENT_NODE, STATE, DEPTH
     def calculate_path_cost(self):
         # Calculate the new path cost of this node by the formula:
         # path-cost = parent-path-cost + path-cost
-        if self.PARENT_NODE is not None and len(self.PARENT_NODE.STATE) > 2:
-            self.PATH_COST += self.PARENT_NODE.STATE[2]
+
+        parent = self.PARENT_NODE
+        while parent is not None:
+            if parent is not None and len(parent.STATE) > 2:
+                self.PATH_COST += int(parent.STATE[2])
+
+            parent = parent.PARENT_NODE
+
         if len(self.STATE) > 2:  # A state has the format (<name>, <heuristic>, <path-cost>) where path-cost may be missing.
             self.PATH_COST += self.STATE[2]
 
         self.TOTAL_PATH_COST = self.PATH_COST + self.STATE[1]  # f(x) = g(x) + h(x)
+
+
+
+        #if self.PARENT_NODE is not None and len(self.PARENT_NODE.STATE) > 2:
+        #    self.PATH_COST += self.PARENT_NODE.STATE[2]
+        #if len(self.STATE) > 2:  # A state has the format (<name>, <heuristic>, <path-cost>) where path-cost may be missing.
+        #    self.PATH_COST += self.STATE[2]
+
+        #self.TOTAL_PATH_COST = self.PATH_COST + self.STATE[1]  # f(x) = g(x) + h(x)
 
     def display(self):
         print(self)
